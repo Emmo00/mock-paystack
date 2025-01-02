@@ -14,33 +14,40 @@ trait InitializePaymentHandler
     use GuzzleHttpClientInterface;
 
     /**
-     * Validate and return an initialize payment request
+     * returns a function that Validates and return an initialize payment request
      * 
-     * @param \GuzzleHttp\Psr7\Request|\Illuminate\Http\Client\Request $request
-     * @return string \Emmo00\MockPaystack\Constants\PaystackResponseTypes
+     * @return callable
      */
-    private function validateAndFakeInitializePayment($request)
+    private function validateAndFakeInitializePayment()
     {
-        $body = $this->getRequestBody($request);
-        $headers = $this->getRequestHeaders($request);
+        /**
+         * Validate and return an initialize payment request
+         * 
+         * @param \GuzzleHttp\Psr7\Request|\Illuminate\Http\Client\Request $request
+         * @return string \Emmo00\MockPaystack\Constants\PaystackResponseTypes
+         */
+        return function ($request) {
+            $body = $this->getRequestBody($request);
+            $headers = $this->getRequestHeaders($request);
 
-        if (!isset($body['email'])) {
-            return PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_EMAIL;
-        }
+            if (!isset($body['email'])) {
+                return PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_EMAIL;
+            }
 
-        if (!isset($body['amount'])) {
-            return PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_AMOUNT;
-        }
+            if (!isset($body['amount'])) {
+                return PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_AMOUNT;
+            }
 
-        if (!isset($body['currency'])) {
-            return PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_CURRENCY;
-        }
+            if (!isset($body['currency'])) {
+                return PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_CURRENCY;
+            }
 
-        if (!isset($headers['Authorization']) || count(explode(' ', $headers['Authorization'])) !== 2) {
-            return PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_KEY;
-        }
+            if (!isset($headers['Authorization']) || count(explode(' ', $headers['Authorization'][0])) !== 2) {
+                return PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_KEY;
+            }
 
-        return PaystackResponseTypes::INITIALIZE_PAYMENT_SUCCESS;
+            return PaystackResponseTypes::INITIALIZE_PAYMENT_SUCCESS;
+        };
     }
 
     /**
@@ -55,7 +62,7 @@ trait InitializePaymentHandler
      */
     private function fakeInitializePayment()
     {
-        $this->fakeCustomResponse($this->validateAndFakeInitializePayment);
+        $this->fakeCustomResponse($this->validateAndFakeInitializePayment());
     }
 
     /**
