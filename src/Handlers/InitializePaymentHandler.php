@@ -5,6 +5,8 @@ namespace Emmo00\MockPaystack\Handlers;
 use Emmo00\MockPaystack\Constants\PaystackResponseTypes;
 use GuzzleHttp\Psr7\Request;
 
+$responses = require(__DIR__ . '/../constants/paystack_responses.php');
+
 /**
  * Handle mocking paystack payment initialization
  */
@@ -24,11 +26,11 @@ trait InitializePaymentHandler
         $headers = $request->getHeaders();
 
         if (!isset($body['email'])) {
-            return static::makeResponse(static::responses[PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_EMAIL]);
+            return static::makeResponse($responses[PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_EMAIL]);
         }
 
         if (!isset($body['amount'])) {
-            return static::makeResponse(static::responses[PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_AMOUNT]);
+            return static::makeResponse($responses[PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_AMOUNT]);
         }
 
         if (!isset($body['currency'])) {

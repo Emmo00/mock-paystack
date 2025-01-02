@@ -6,16 +6,23 @@ namespace Emmo00\MockPaystack\Handlers;
 use GuzzleHttp\Psr7\Response;
 
 /**
+ * Array of paystack responses
+ * @var array
+ */
+$responses = require(__DIR__ . '/../constants/paystack_responses.php');
+
+/**
  * Base Handler
  */
 trait BaseHandler
 {
-    /**
-     * Array of paystack responses
-     * @var array
-     */
-    public static $responses = require(__DIR__ . '/../constants/paystack_responses.php');
+    private static $responses;
 
+    private function setupConfigurations()
+    {
+        self::$responses = require(__DIR__ . '/../constants/paystack_responses.php');
+        self::$initialized = true;
+    }
     /**
      * mock custom response
      * 
@@ -37,7 +44,7 @@ trait BaseHandler
      */
     private function fakePaystackResponse($responseType)
     {
-        $response = $this->responses[(string) $responseType];
+        $response = $responses[(string) $responseType];
 
         $this->appendToHandler($response['status_code'], $response['headers'], $response['body'], $response['version'], $response['reason']);
     }
