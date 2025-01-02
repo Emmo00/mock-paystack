@@ -3,37 +3,46 @@
 namespace Emmo00\MockPaystack\Handlers;
 
 
+use Emmo00\MockPaystack\Utils\GuzzleHttpClientInterface;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-
-/**
- * Array of paystack responses
- * @var array
- */
-$responses = require(__DIR__ . '/../constants/paystack_responses.php');
+use Illuminate\Support\Facades\Http;
 
 /**
  * Base Handler
  */
 trait BaseHandler
 {
-    private static $responses;
+    use GuzzleHttpClientInterface;
 
-    private function setupConfigurations()
-    {
-        self::$responses = require(__DIR__ . '/../constants/paystack_responses.php');
-        self::$initialized = true;
-    }
+    /**
+     * Array of paystack responses
+     * @var array
+     */
+    private array $responses;
+
     /**
      * mock custom response
      * 
      * appends the response to the mock handler
      * 
-     * @param callable|\GuzzleHttp\Psr7\Request $response
+     * @param callable $response
      * @return void
      */
     private function fakeCustomResponse($response)
     {
-        $this->mockHandler->append($response);
+        // fake guzzle
+        $this->mockHandler->append(function (Request $request) use ($response) {
+            return $this->makeGuzzleResponse($response($request), $this->responses);
+        });
+
+
+        // fake http
+        Http::fake(function (\Illuminate\Http\Client\Request $request) use ($response) {
+            $responseType = $response($request);
+
+            return $this->makeHttpClientResponse($responseType, $this->responses);
+        });
     }
 
     /**
@@ -44,9 +53,15 @@ trait BaseHandler
      */
     private function fakePaystackResponse($responseType)
     {
-        $response = $responses[(string) $responseType];
+        $response = $this->responses[(string) $responseType];
 
-        $this->appendToHandler($response['status_code'], $response['headers'], $response['body'], $response['version'], $response['reason']);
+        // guzzle fake
+        $this->appendToGuzzleHandler($response['status_code'], $response['headers'], $response['body'], $response['version'], $response['reason']);
+
+        // http fake
+        Http::fake([
+            $responseType => Http::response($response['body'], $response['status_code'], ),
+        ]);
     }
 
     /**
@@ -59,29 +74,12 @@ trait BaseHandler
      * @param string|null $reason
      * @return void
      */
-    private function appendToHandler($statusCode = 200, $headers = [], $body = '', $version = '1.1', $reason = null)
+    private function appendToGuzzleHandler($statusCode = 200, $headers = [], $body = '', $version = '1.1', $reason = null)
     {
         if (!$this->mockHandler) {
             $this->setupTestGuzzleClient();
         }
 
         $this->mockHandler->append(new Response($statusCode, $headers, $body, $version, $reason));
-    }
-
-    /**
-     * Build a response
-     * 
-     * @param mixed $responseData
-     * @return Response
-     */
-    private static function makeResponse($responseData)
-    {
-        $statusCode = $responseData['status_code'] ?? 200;
-        $headers = $responseData['headers'] ?? [];
-        $body = $responseData['body'] ?? '';
-        $version = $responseData['version'] ?? '1.1';
-        $reason = $responseData['reason'] ?? null;
-
-        return new Response($statusCode, $headers, $body, $version, $reason);
     }
 }

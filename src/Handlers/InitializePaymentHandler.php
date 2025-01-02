@@ -3,9 +3,7 @@
 namespace Emmo00\MockPaystack\Handlers;
 
 use Emmo00\MockPaystack\Constants\PaystackResponseTypes;
-use GuzzleHttp\Psr7\Request;
-
-$responses = require(__DIR__ . '/../constants/paystack_responses.php');
+use Emmo00\MockPaystack\Utils\GuzzleHttpClientInterface;
 
 /**
  * Handle mocking paystack payment initialization
@@ -13,35 +11,36 @@ $responses = require(__DIR__ . '/../constants/paystack_responses.php');
 trait InitializePaymentHandler
 {
     use BaseHandler;
+    use GuzzleHttpClientInterface;
 
     /**
      * Validate and return an initialize payment request
      * 
-     * @param \GuzzleHttp\Psr7\Request $request
-     * @return \GuzzleHttp\Psr7\Response
+     * @param \GuzzleHttp\Psr7\Request|\Illuminate\Http\Client\Request $request
+     * @return string \Emmo00\MockPaystack\Constants\PaystackResponseTypes
      */
-    private static function validateAndFakeInitializePayment(Request $request)
+    private function validateAndFakeInitializePayment($request)
     {
-        $body = json_decode($request->getBody()->getContents(), true);
-        $headers = $request->getHeaders();
+        $body = $this->getRequestBody($request);
+        $headers = $this->getRequestHeaders($request);
 
         if (!isset($body['email'])) {
-            return static::makeResponse($responses[PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_EMAIL]);
+            return PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_EMAIL;
         }
 
         if (!isset($body['amount'])) {
-            return static::makeResponse($responses[PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_AMOUNT]);
+            return PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_AMOUNT;
         }
 
         if (!isset($body['currency'])) {
-            return static::makeResponse(static::$responses[PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_CURRENCY]);
+            return PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_CURRENCY;
         }
 
         if (!isset($headers['Authorization']) || count(explode(' ', $headers['Authorization'])) !== 2) {
-            return static::makeResponse(static::$responses[PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_KEY]);
+            return PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_KEY;
         }
 
-        return static::makeResponse(static::$responses[PaystackResponseTypes::INITIALIZE_PAYMENT_SUCCESS]);
+        return PaystackResponseTypes::INITIALIZE_PAYMENT_SUCCESS;
     }
 
     /**

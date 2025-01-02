@@ -8,5 +8,11 @@ namespace Emmo00\MockPaystack\Handlers;
 trait Core
 {
     use InitializePaymentHandler;
-    use WebHookHandler;
+    use ChargeSuccessWebhookHandler;
+
+    /**
+     * Array of paystack responses
+     * @var array
+     */
+    private array $responses;
 }

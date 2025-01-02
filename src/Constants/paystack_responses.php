@@ -1,5 +1,7 @@
 <?php
 
+namespace Emmo00\MockPaystack\Constants;
+
 use Emmo00\MockPaystack\Constants\PaystackResponseTypes;
 
 /**
@@ -9,8 +11,9 @@ use Emmo00\MockPaystack\Constants\PaystackResponseTypes;
  * 
  * @return array
  */
-return [
+return $responses = [
     PaystackResponseTypes::INITIALIZE_PAYMENT_SUCCESS => [
+        'url' => 'https://api.paystack.co/transaction/initialize',
         'status_code' => 200,
         'headers' => [],
         'body' => json_encode([
@@ -26,6 +29,7 @@ return [
         'reason' => null
     ],
     PaystackResponseTypes::INITIALIZE_PAYMENT_FAILURE => [
+        'url' => 'https://api.paystack.co/transaction/initialize',
         'status_code' => 400,
         'headers' => [],
         'body' => json_encode([
@@ -37,6 +41,7 @@ return [
         'reason' => null,
     ],
     PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_KEY => [
+        'url' => 'https://api.paystack.co/transaction/initialize',
         'status_code' => 401,
         'headers' => [],
         'body' => json_encode([
@@ -48,6 +53,7 @@ return [
         'reason' => null
     ],
     PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_REQUEST => [
+        'url' => 'https://api.paystack.co/transaction/initialize',
         'status_code' => 400,
         'headers' => [],
         'body' => json_encode([
@@ -59,6 +65,7 @@ return [
         'reason' => null
     ],
     PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_CURRENCY => [
+        'url' => 'https://api.paystack.co/transaction/initialize',
         'status_code' => 400,
         'headers' => [],
         'body' => json_encode([
@@ -70,6 +77,7 @@ return [
         'reason' => null
     ],
     PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_AMOUNT => [
+        'url' => 'https://api.paystack.co/transaction/initialize',
         'status_code' => 400,
         'headers' => [],
         'body' => json_encode([
@@ -81,6 +89,7 @@ return [
         'reason' => null
     ],
     PaystackResponseTypes::INITIALIZE_PAYMENT_INVALID_EMAIL => [
+        'url' => 'https://api.paystack.co/transaction/initialize',
         'status_code' => 400,
         'headers' => [],
         'body' => json_encode([

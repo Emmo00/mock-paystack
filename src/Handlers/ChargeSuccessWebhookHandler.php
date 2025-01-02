@@ -7,9 +7,9 @@ use Emmo00\MockPaystack\Constants\PaystackWebhookPayloadTypes;
 /**
  * Send Paystack mock notification handler
  */
-trait WebHookHandler
+trait ChargeSuccessWebhookHandler
 {
-    private static $payloads = require(__DIR__ . '/../constants/paystack_webhook_payloads.php');
+    use BaseWebHookHandler;
 
     /**
      * send a fake webhook `charge success` notification to your paystack webhook handler route
@@ -39,7 +39,7 @@ trait WebHookHandler
         $authorization = [],
         $reusable_authorization = true,
     ) {
-        $webhookData = static::$payloads[PaystackWebhookPayloadTypes::CHARGE_SUCCESS];
+        $webhookData = $this->webhook_payloads[PaystackWebhookPayloadTypes::CHARGE_SUCCESS];
         $webhookData['data']['metadata'] = $metadata;
         $webhookData['data']['amount'] = $amount;
         $webhookData['data']['currency'] = $currency;
@@ -51,13 +51,6 @@ trait WebHookHandler
             $webhookData['data']['authorization'] = $authorization;
         $webhookData['data']['authorization']['reusable'] = $reusable_authorization;
 
-        $jsonPayload = json_encode($webhookData);
-        $signature = hash_hmac('sha512', $jsonPayload, $secret_key);
-
-
-        $this->postJson($route, $webhookData, [
-            'X-Paystack-Signature' => $signature,
-            'Content-Type' => 'application/json'
-        ]);
+        $this->prepareAndSendPayload($route, $webhookData, $secret_key);
     }
 }
