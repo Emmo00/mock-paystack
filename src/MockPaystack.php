@@ -38,6 +38,6 @@ trait MockPaystack
 
     private function setWebHookPayloads()
     {
-        $this->payloads = require(__DIR__ . '/Constants/paystack_webhook_payloads.php');
+        $this->webhook_payloads = require(__DIR__ . '/Constants/paystack_webhook_payloads.php');
     }
 }

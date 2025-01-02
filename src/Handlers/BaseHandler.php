@@ -60,7 +60,7 @@ trait BaseHandler
 
         // http fake
         Http::fake([
-            $responseType => Http::response($response['body'], $response['status_code'], ),
+            $response['url'] => Http::response($response['body'], $response['status_code'], ),
         ]);
     }
 

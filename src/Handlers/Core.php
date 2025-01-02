@@ -15,4 +15,10 @@ trait Core
      * @var array
      */
     private array $responses;
+    
+    /**
+     * Array of paystack webhook payloads
+     * @var array
+     */
+    private array $webhook_payloads;
 }

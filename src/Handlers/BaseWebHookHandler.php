@@ -25,12 +25,13 @@ trait BaseWebHookHandler
         $jsonPayload = json_encode($payload);
         $signature = hash_hmac('sha512', $jsonPayload, $secret_key);
 
-        Http::withHeader(
-            'X-Paystack-Signature',
-            $signature
-        )->withHeader(
-                'Content-Type',
-                'application/json'
-            )->post($route, $payload);
+        $this->postJson(
+            $route,
+            $payload,
+            [
+                'X-Paystack-Signature' => $signature,
+                'Content-Type' => 'application/json'
+            ]
+        );
     }
 }
