@@ -1,21 +1,28 @@
 {
-    "name": "emmo00/mock-paystack",
-    "description": "PHP package for mocking Paystack responses and webhooks.",
+    "name": "emma/mock-paystack-laravel",
+    "description": "PHP package for mocking Paystack responses and webhooks in your Laravel Test suite",
     "type": "library",
+    "license": "MIT",
     "require": {
         "php": ">=8.1",
         "guzzlehttp/guzzle": "^7.0",
         "guzzlehttp/psr7": "^2.0",
         "illuminate/http": "^11.36"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    },
     "autoload": {
         "psr-4": {
             "Emmo00\\MockPayStack\\": "src/"
         }
     },
-    "require-dev": {
-        "phpunit/phpunit": "^10.0"
-    },
+    "authors": [
+        {
+            "name": "Emmo00",
+            "email": "nwaforemmanuel005@gmail.com"
+        }
+    ],
     "scripts": {
         "test": "phpunit"
     }
